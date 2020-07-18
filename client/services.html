@@ -15,13 +15,14 @@
 	<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
 	<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-	<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="serverConnect.js"></script>
 	<link href="style.css" rel="stylesheet">
 	<style>
 		#mapid { height: 500px; }
 	</style>
 </head>
-<body>
+<body onload = "getAllRouteNames()">
 
 <!-- Navigation -->
 <nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
@@ -67,9 +68,14 @@
 		accessToken: 'pk.eyJ1IjoicmFwcmFwcmFmYSIsImEiOiJjazdtemRwczAwbGxkM2xwaWU2cTdtb2U1In0.IuwMdFOeKEzy5jPMlwFZDw',
 		tileSize: 512,
 		zoomOffset: -1
-	}).addTo(mymap);
-	
+    }).addTo(mymap);
 </script>
+
+
+<select name="routes" id="routes">
+</select>
+
+<button type="button">Test</button>
  
 <!--- Connect -->
 <div class="container-fluid padding">
