@@ -17,6 +17,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script src="serverConnect.js"></script>
+
 	<link href="style.css" rel="stylesheet">
 	<style>
 		#mapid { height: 500px; }
@@ -69,13 +70,62 @@
 		tileSize: 512,
 		zoomOffset: -1
     }).addTo(mymap);
+
+    var waypoints;
+    var wayPointLat;
+    var wayPointLng;
+    var numberOfWayPointsAdded;
+    var routeToDisplay;
+    var control;
+
+
+
+    function displayRouteByName(){
+        if (control != null) {
+            mymap.removeControl(control);
+            control = null;
+        }
+        var sel = document.getElementById("routes");
+        var routename = sel.options[sel.selectedIndex].text;
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                routeToDisplay = JSON.parse(this.responseText);
+                wayPointLat = routeToDisplay.waypointlat.split(',');
+                wayPointLng = routeToDisplay.waypointlng.split(',');
+                numberOfWayPointsAdded = routeToDisplay.numberofwaypointsadded;
+                waypoints = [];
+                waypoints.splice(0,waypoints.length);
+                waypoints.length = 0;
+                for (let i = 0; i < numberOfWayPointsAdded; i++){
+                    waypoints.push(L.latLng(wayPointLat[i], wayPointLng[i]));
+                }
+                control = L.Routing.control({
+                    waypoints:
+                        waypoints
+                    ,
+                    routeWhileDragging: true,
+                    show: true,
+                    language: 'en',
+                    geocoder: L.Control.Geocoder.nominatim(),
+                    autoRoute: true
+                }).addTo(mymap);
+            }
+        };
+        xhttp.open("GET", "http://localhost:8080/api/routes/"+routename, true);
+        xhttp.setRequestHeader("Content-type", "application/json");
+        xhttp.send('');
+    }
+    
+
+
 </script>
 
 
 <select name="routes" id="routes">
 </select>
 
-<button type="button">Test</button>
+<button type="button" onclick="displayRouteByName()">Test</button>
  
 <!--- Connect -->
 <div class="container-fluid padding">

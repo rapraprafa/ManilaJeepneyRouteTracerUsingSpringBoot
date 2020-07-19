@@ -3,10 +3,7 @@ package com.example.manilajeepneyroutetracerspringbootserver.controller;
 import com.example.manilajeepneyroutetracerspringbootserver.model.Route;
 import com.example.manilajeepneyroutetracerspringbootserver.repository.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,7 +16,13 @@ public class RouteController {
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping
-    public List<Route> getAllUsers(){
+    public List<Route> getAllRoutes(){
         return this.routeRepository.findAll();
+    }
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @GetMapping(path = "{routename}")
+    public Route getRouteByName(@PathVariable("routename") String routename){
+        return this.routeRepository.findRouteByName(routename);
     }
 }

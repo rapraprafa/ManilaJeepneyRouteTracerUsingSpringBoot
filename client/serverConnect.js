@@ -20,3 +20,4 @@ function getAllRouteNames(){
     xhttp.setRequestHeader("Content-type", "application/json");
     xhttp.send('');
 }
+
