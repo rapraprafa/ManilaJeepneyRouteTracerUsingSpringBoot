@@ -11,7 +11,7 @@ function getAllRouteNames(){
              for(let j = 0; j < routeArray.length; j++){
                 var option = document.createElement("option")
                 option.value = comboBoxValues[j];
-                option.textContent = comboBoxValues[j];;
+                option.textContent = comboBoxValues[j];
                 routesComboBox.appendChild(option)
              }
          }

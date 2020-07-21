@@ -53,4 +53,24 @@ public class Route {
     public String getwaypointlng() {
         return waypointlng;
     }
+
+    public void setRouteid(long routeid) {
+        this.routeid = routeid;
+    }
+
+    public void setRoutename(String routename) {
+        this.routename = routename;
+    }
+
+    public void setNumberofwaypointsadded(int numberofwaypointsadded) {
+        this.numberofwaypointsadded = numberofwaypointsadded;
+    }
+
+    public void setWaypointlat(String waypointlat) {
+        this.waypointlat = waypointlat;
+    }
+
+    public void setWaypointlng(String waypointlng) {
+        this.waypointlng = waypointlng;
+    }
 }

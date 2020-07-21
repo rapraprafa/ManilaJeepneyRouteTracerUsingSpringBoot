@@ -26,13 +26,13 @@
                 <li class=""></li>
                 <li class="nav-item"><a class="nav-link" href="#">Reservation</a></li>
                 <li class=""></li>
-                <li class="nav-item"><a class="nav-link" href="#">Products</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Update Routes</a></li>
                 <li class=""></li>
                 <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
                 <li class=""></li>
-                <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Delete Routes</a></li>
                 <li class=""></li>
-                <li class="nav-item"><a class="nav-link" href="#">Careers</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Add Route</a></li>
                 <li class=""></li>
             </ul>
         </div>
@@ -52,7 +52,7 @@
         <div class="carousel-caption">
             <h1 class="display-2">Minerva Salon</h1>
             <h3>We Do It For You</h3>
-            <button type="button" class="btn btn-outline-light btn-lg">Services</button>
+            <button type="button" class="btn btn-outline-light btn-lg">Route Tracer</button>
             <button type="button" class="btn btn-primary btn-lg">Reserve now</button>
         </div>
     </div>

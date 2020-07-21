@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Minerva's Salon</title>
+	<link rel="stylesheet" href="bootstrap.min.css">
+	<script src="jquery.min.js"></script>
+	<script src="popper.min.js"></script>
+	<script src="bootstrap.min.js"></script>
+	<script src="all.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"/>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+	<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+	<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+	<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="serverConnect.js"></script>
+
+	<link href="style.css" rel="stylesheet">
+	<style>
+		#mapid { height: 500px; }
+	</style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html"><img src="img/logo.png" /></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class=""></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About Us</a></li>
+                    <li class=""></li>
+                    <li class="nav-item"><a class="nav-link" href="routetracer.html">Route Tracer</a></li>
+                    <li class=""></li>
+                    <li class="nav-item"><a class="nav-link" href="addroute.html">Add Route</a></li>
+                    <li class=""></li>
+                    <li class="nav-item"><a class="nav-link" href="updateroutes.html">Update Routes</a></li>
+                    <li class=""></li>
+                    <li class="nav-item"><a class="nav-link" href="deleteroutes.html">Delete Routes</a></li>
+                    <li class=""></li>
+                    <li class="nav-item"><a class="nav-link" href="reservation.html">Reservation</a></li>
+                    <li class=""></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    </nav>
+
+    <div id="mapid"></div>
+
+    <script>
+        // initialize the map
+        var mymap = L.map('mapid').setView([14.60156, 121.00459], 13);
+        // load a tile layer
+        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 30,
+            id: 'mapbox/streets-v11',
+            accessToken: 'pk.eyJ1IjoicmFwcmFwcmFmYSIsImEiOiJjazdtemRwczAwbGxkM2xwaWU2cTdtb2U1In0.IuwMdFOeKEzy5jPMlwFZDw',
+            tileSize: 512,
+            zoomOffset: -1
+        }).addTo(mymap);
+        L.Control.geocoder().addTo(mymap);
+        function createButton(label, container) {
+            var btn = L.DomUtil.create('button', '', container);
+            btn.setAttribute('type', 'button');
+            btn.innerHTML = label;
+            return btn;
+        }
+        var waypoints = [null];
+        var control = L.Routing.control({
+            waypoints: waypoints,
+            routeWhileDragging: true,
+            show: true,
+            language: 'en',
+            geocoder: L.Control.Geocoder.nominatim(),
+            autoRoute: true
+        }).addTo(mymap);
+
+        mymap.on('click', function (e) {
+            var container = L.DomUtil.create('div'),
+                startBtn = createButton('Start from this location', container),
+                destBtn = createButton('Go to this location', container);
+            L.popup()
+                .setContent(container)
+                .setLatLng(e.latlng)
+                .openOn(mymap);
+            L.DomEvent.on(startBtn, 'click', function () {
+                control.spliceWaypoints(0, 1, e.latlng);
+                mymap.closePopup();
+            });
+            L.DomEvent.on(destBtn, 'click', function () {
+                control.spliceWaypoints(control.getWaypoints().length - 1, 1, e.latlng);
+                mymap.closePopup();
+            });
+
+            routeArray = control.getWaypoints();
+            document.getElementById('<%= WaypointCount.ClientID %>').value = control.getWaypoints().length;
+
+            L.popup().setContent(container).setLatLng(e.latlng).openOn(mymap);
+
+        });
+        var routeArray = new Array();
+        var xhttp = new XMLHttpRequest();
+        var yourArrayLat = [];
+        var yourArrayLng = [];
+        var routename;
+        var yourArrayLatFin;
+        var yourArrayLngFin;
+        var numberofwaypointsadded;
+
+        function sendRoute() {
+            for (var i = 0; i < control.getWaypoints().length; i++) {
+                yourArrayLat.push(routeArray[i].latLng.lat);
+                yourArrayLng.push(routeArray[i].latLng.lng);
+            }
+            routename = document.getElementById("routename").value;
+            numberofwaypointsadded = control.getWaypoints().length;
+            yourArrayLatFin = yourArrayLat.join(", ");
+            yourArrayLngFin = yourArrayLng.join(", ");
+            var JSONtosend = {
+                "routename": routename,
+                "numberofwaypointsadded": numberofwaypointsadded,
+                "waypointlat": yourArrayLatFin,
+                "waypointlng": yourArrayLngFin
+            }
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var routeAddedResponse = JSON.parse(this.responseText);
+                    if(routeAddedResponse.length != 0){
+                        alert("Route successfully added!");
+                    }
+                    else{
+                        alert("Route not added. Please try again later.")
+                    }
+                }
+            };
+            xhttp.open("POST", "http://localhost:8080/api/routes", true);
+            xhttp.setRequestHeader("Content-type", "application/json");
+            xhttp.send(JSON.stringify(JSONtosend));
+        }
+        
+    </script>
+
+    <input type="text" name="routename" id="routename">
+    <button type="button" onclick="sendRoute()">Add Route</button>
+
+    <!--- Connect -->
+    <div class="container-fluid padding">
+        <div class="row text-center padding">
+            <div class="col-12">
+                <h2>Connect</h2>
+            </div>
+            <div class="col-12 social padding">
+                <a href="http://www.facebook.com/minervassalon"><i class="fab fa-facebook"></i></a>
+                <a href="http://www.twitter.com/minervassalon"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!--- Footer -->
+    <footer>
+        <div class="container-fluid padding">
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <div class="footernote">
+                        <img src="img/w3newbie.png">
+                        <hr class="light" />
+                        <p>02 954-4062</p>
+                        <p>minervassalon@gmail.com</p>
+                        <p>2259 Onyx Street</p>
+                        <p>San Andres Bukid, Manila</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="footernote">
+                        <hr class="light" />
+                        <h5>Our Hours</h5>
+                        <hr class="light" />
+                        <p>Monday-Saturday: 10:00 AM - 6:00 PM</p>
+                        <p>Sunday: Closed</p>
+                        <p>We are also closed on holidays!</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="footernote">
+                        <hr class="light" />
+                        <h5>Navigation</h5>
+                        <hr class="light" />
+                        <a href="index.html">
+                            <p>Home</p>
+                        </a href>
+                        <a href="about.html">
+                            <p>About Us</p>
+                        </a href>
+                        <a href="routetracer.html">
+                            <p>Route Tracer</p>
+                        </a href>
+                        <a href="addroute.html">
+                            <p>Add Route</p>
+                        </a href>
+                        <a href="updateroutes.html">
+                            <p>Update Routes</p>
+                        </a href>
+                        <a href="deleteroutes.html">
+                            <p>Delete Routes</p>
+                        </a href>
+                        <a href="reservation.html">
+                            <p>Reservation</p>
+                        </a href>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <hr class="light-100">
+                    <div class="footernote">
+                        <h5>&copy; Copyright 2019 Zebra Web Shops. All Rights Reserved.</h5>
+                        <h5><br>I � WebDev</h5>
+                    </div>
+                    <h5><br><a href="adminlogin/index.php">Admin interface</a></h5>
+                </div>
+            </div>
+        </div>
+        </div>
+    </footer>
+
+
+</body>
+
+</html>
