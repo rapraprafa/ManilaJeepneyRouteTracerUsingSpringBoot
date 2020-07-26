@@ -104,7 +104,6 @@
         });
 
         routeArray = control.getWaypoints();
-        document.getElementById('<%= WaypointCount.ClientID %>').value = control.getWaypoints().length;
 
         L.popup().setContent(container).setLatLng(e.latlng).openOn(mymap);
 
